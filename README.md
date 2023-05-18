@@ -24,7 +24,7 @@ After installing the dependencies, you can start the development server by runni
 python manage.py runserver
 ```
 
-This will start the server at http://localhost:8000/. You can access the application by visiting this URL in your web browser.
+This will start the server at http://localhost:8000/home_async.html. You can access the application by visiting this URL in your web browser.
 
 To make a prediction, upload a chest CT scan in JPEG or PNG format by clicking the "Choose File" button, then click the "Submit" button. The application will use the pre-trained InceptionV3 model to predict whether the scan is normal or shows signs of adenocarcinoma, large cell carcinoma, or squamous cell carcinoma.
 
