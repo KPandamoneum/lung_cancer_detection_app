@@ -5,7 +5,6 @@
         
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/style_home_async.css' %}">
-        <!-- <link rel="stylesheet" type="text/css" href="../static/css/style.css"> -->
         
         <title>Lung Cancer Detection</title>
     </head>
@@ -21,7 +20,9 @@
         {% endif %}
         {% if result %}
             <h2>Results:</h2>
-            <p>{{ result }}</p>
+            <p>Predicted class: {{ result.0 }}</p>
+            <p>Probability: {{ result.1 }}%</p>
         {% endif %}
     </body>
 </html>
+

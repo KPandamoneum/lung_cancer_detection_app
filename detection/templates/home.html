@@ -4,8 +4,7 @@
         <meta charset="utf-8">
         
         {% load static %}
-        <link rel="stylesheet" text="text/css" href="{% static 'css/style_home.css.css' %}">
-        <!-- <link rel="stylesheet" text="text/css" href="../static/css/style_home.css"> -->
+        <link rel="stylesheet" text="text/css" href="{% static 'css/style_home.css' %}">
         
         <title>Lung Cancer Detection</title>
     </head>
@@ -21,7 +20,9 @@
         {% endif %}
         {% if result %}
             <h2>Results:</h2>
-            <p>{{ result }}</p>
+            <p>Predicted class: {{ result.0 }}</p>
+            <p>Probability: {{ result.1 }}%</p>
         {% endif %}
     </body>
 </html>
+

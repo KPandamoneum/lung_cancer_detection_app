@@ -23,33 +23,32 @@ def process_image(image, target_size):
 
 
 def predict_image(image_path):
-    image = Image.open(image_path)
-    processed_image = process_image(image, target_size=(224, 224))
-    preds = model.predict(processed_image) # type: ignore
-    pred = np.argmax(preds[0])
     classes_dir = ["Adenocarcinoma", "Large cell carcinoma", "Normal", "Squamous cell carcinoma"]
-    prediction = classes_dir[pred]
-    return prediction
-
+    
+    img = Image.open(image_path)
+    processed_image = process_image(img, target_size=(224, 224))
+    preds = model.predict(processed_image) # type: ignore
+    pred_index = np.argmax(preds)
+    pred_class = classes_dir[pred_index]
+    prob = round(np.max(preds) * 100, 2)
+    
+    return pred_class, prob
 
 async def predict_async_helper(image_path):
     async with aiohttp.ClientSession() as session:
         async with session.get(image_path) as resp:
             image_content = await resp.content.read()
     image_bytes = io.BytesIO(image_content)
-    preds = predict_image(image_bytes)
-    return preds
-
+    pred_class, prob = predict_image(image_bytes)
+    return pred_class, prob
 
 def home(request):
     return render(request, 'home.html')
-
 
 async def predict_async(image_path):
     loop = asyncio.get_event_loop()
     result = await loop.run_in_executor(None, predict_image, image_path)
     return result
-
 
 async def home_async(request):
     context = {}
@@ -57,7 +56,6 @@ async def home_async(request):
         form = ImageUploadForm(request.POST, request.FILES)
         if form.is_valid():
             image_file = request.FILES['image']
-            # Check if the uploaded file is an image file
             if not imghdr.what(image_file):
                 context['error'] = 'Uploaded file is not a valid image file.'
                 return render(request, 'home_async.html', context)
