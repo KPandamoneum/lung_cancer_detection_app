@@ -5,7 +5,7 @@ This is a web application built with Django and Python that utilizes a Mobile Ne
 # Dataset
 
 The dataset used for training the model is the Chest CT scan dataset by Mohammed Hanney, which can be found [here](https://www.kaggle.com/datasets/mohamedhanyyy/chest-ctscan-images). Images are not in dcm format, the images are in jpg or png to fit the model
-Data contain 3 chest cancer types which are Adenocarcinoma,Large cell carcinoma, Squamous cell carcinoma , and 1 folder for the normal cell
+Data contain 3 chest cancer types which are Adenocarcinoma, Large cell carcinoma, Squamous cell carcinoma , and 1 folder for the normal cell
 Data folder is the main folder that contain all the step folders
 inside Data folder are test , train , valid
 
