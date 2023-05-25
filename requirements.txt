@@ -1,5 +1,11 @@
-Django==4.1
-numpy==1.23.5
-Pillow==9.4.0
-tensorflow==2.12.0
-aiohttp==3.8.1
+# Django==4.1
+# numpy==1.23.5
+# Pillow==9.4.0
+# tensorflow==2.12.0
+# aiohttp==3.8.4
+
+Django
+numpy
+Pillow
+tensorflow
+aiohttp
