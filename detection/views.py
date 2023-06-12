@@ -10,7 +10,8 @@ from .forms import ImageUploadForm
 import imghdr
 
 
-model = load_model("mobnet_model_best.hdf5")
+# model = load_model("mobnet_model_best.hdf5") # accuracy = 84%
+model = load_model("mobnet_model_v4.h5") # accuracy = 95%
 
 def process_image(image, target_size):
     if image.mode != "RGB":
