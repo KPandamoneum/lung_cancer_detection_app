@@ -1,17 +1,18 @@
 import numpy as np
 from django.shortcuts import render
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from keras.models import load_model
 from keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.preprocessing import image # type: ignore
 from PIL import Image
-import io
-import asyncio
-import aiohttp
 from .forms import ImageUploadForm
 import imghdr
 
 
-# model = load_model("mobnet_model_best.hdf5") # accuracy = 84%
-model = load_model("mobnet_model_v4.h5") # accuracy = 95%
+ct_scan_model = load_model("mobnet_n_v_c.h5")
+cancer_model = load_model("mobnet_model_best.hdf5")
+
 
 def process_image(image, target_size):
     if image.mode != "RGB":
@@ -23,35 +24,33 @@ def process_image(image, target_size):
     return image
 
 
-def predict_image(image_path):
-    classes_dir = ["Adenocarcinoma", "Large cell carcinoma", "Normal", "Squamous cell carcinoma"]
-    
+def predict_ct_scan(image_path):
+    classes_dir = ["ctscan", "normal"]
     img = Image.open(image_path)
     processed_image = process_image(img, target_size=(224, 224))
-    preds = model.predict(processed_image) # type: ignore
+    preds = ct_scan_model.predict(processed_image) # type: ignore
     pred_index = np.argmax(preds)
     pred_class = classes_dir[pred_index]
     prob = round(np.max(preds) * 100, 2)
-    
     return pred_class, prob
 
-async def predict_async_helper(image_path):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(image_path) as resp:
-            image_content = await resp.content.read()
-    image_bytes = io.BytesIO(image_content)
-    pred_class, prob = predict_image(image_bytes)
+
+def predict_cancer(image_path):
+    classes_dir = ["Adenocarcinoma", "Large cell carcinoma", "Normal", "Squamous cell carcinoma"]
+    img = Image.open(image_path)
+    processed_image = process_image(img, target_size=(224, 224))
+    preds = cancer_model.predict(processed_image) # type: ignore
+    pred_index = np.argmax(preds)
+    pred_class = classes_dir[pred_index]
+    prob = round(np.max(preds) * 100, 2)
     return pred_class, prob
+
 
 def home(request):
     return render(request, 'home.html')
 
-async def predict_async(image_path):
-    loop = asyncio.get_event_loop()
-    result = await loop.run_in_executor(None, predict_image, image_path)
-    return result
 
-async def home_async(request):
+def home_async(request):
     context = {}
     if request.method == 'POST':
         form = ImageUploadForm(request.POST, request.FILES)
@@ -60,10 +59,25 @@ async def home_async(request):
             if not imghdr.what(image_file):
                 context['error'] = 'Uploaded file is not a valid image file.'
                 return render(request, 'home_async.html', context)
-            image_path = io.BytesIO(image_file.read())
-            task = predict_async(image_path)
-            preds = await task
-            context['result'] = preds
+            # Save the image to the media folder
+            file_path = default_storage.save('uploads/' + image_file.name, ContentFile(image_file.read()))
+            image_url = default_storage.url(file_path)
+            
+            print("Image URL:", image_url)  # Debugging statement
+            
+            preds = predict_ct_scan(image_file)
+            if preds[0] == "ctscan":
+                cancer_pred = predict_cancer(image_file)
+                context['result'] = {
+                    'is_ct_scan': preds[0],
+                    'ct_scan_pred': preds[1],
+                    'cancer_pred': cancer_pred[0],
+                }
+            else:
+                context['result'] = {
+                    'is_ct_scan': preds[0],
+                }
+            context['image_path'] = image_url
     else:
         form = ImageUploadForm()
     context['form'] = form

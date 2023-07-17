@@ -70,6 +70,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "chest_cancer_detection.wsgi.application"
 
+# Define the path where uploaded media files will be stored
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Define the URL prefix for serving media files
+MEDIA_URL = '/media/'
+
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

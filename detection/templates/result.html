@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Chest Cancer Detection Result</title>
-    </head>
-    <body>
-        <h1>Chest Cancer Detection Result</h1>
-        <p>Predicted class: {{ prediction }}</p>
-        <p>Probability: {{ probability }}%</p>
-    </body>
+<head>
+    <title>Chest Cancer Detection Result</title>
+</head>
+<body>
+    <h1>Chest Cancer Detection Result</h1>
+    {% if result %}
+        {% if result.is_ct_scan == "ctscan" %}
+            <p>Image is a CT scan.</p>
+            <p>Predicted class: {{ result.ct_scan_pred }}</p>
+        {% else %}
+            <p>No prediction available for non-CT scan image.</p>
+        {% endif %}
+        {% if result.cancer_pred %}
+            <p>Predicted cancer type: {{ result.cancer_pred }}</p>
+        {% endif %}
+    {% else %}
+        <p>No result available.</p>
+    {% endif %}
+</body>
 </html>

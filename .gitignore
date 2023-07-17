@@ -1,5 +1,7 @@
-detection/views-old.py
-detection/views-old2.py
+detection/views2.py
+detection/views3.py
 
-detection/templates/home_async-old.html
-detection/templates/home-old.html
+detection/templates/home_async2.html
+detection/templates/home2.html
+
+detection/templates/result2.html

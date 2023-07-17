@@ -1,28 +1,35 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        
-        {% load static %}
-        <link rel="stylesheet" type="text/css" href="{% static 'css/style_home_async.css' %}">
-        
-        <title>Lung Cancer Detection</title>
-    </head>
-    <body>
-        <h1>Lung Cancer Detection</h1>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Detect</button>
-        </form>
-        {% if error %}
-            <p>{{ error }}</p>
+<head>
+    <meta charset="utf-8">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style_home_async.css' %}">
+    <title>Lung Cancer Detection</title>
+</head>
+<body>
+    <h1>Lung Cancer Detection</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Detect</button>
+    </form>
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+    {% if result %}
+        <h2>Results:</h2>
+        {% if result.is_ct_scan == "ctscan" %}
+            <p>Image is a CT scan.</p>
+            <p>Predicted class: {{ result.ct_scan_pred }}</p>
+        {% else %}
+            <p>Image is not a CT scan. : {{ result.is_ct_scan }} </p>
         {% endif %}
-        {% if result %}
-            <h2>Results:</h2>
-            <p>Predicted class: {{ result.0 }}</p>
-            <p>Probability: {{ result.1 }}%</p>
+        {% if result.cancer_pred %}
+            <p>Predicted cancer type: {{ result.cancer_pred }}</p>
         {% endif %}
-    </body>
+        {% if image_path %}
+            <img src="{{ MEDIA_URL }}{{ image_path }}" alt="Uploaded Image">
+        {% endif %}
+    {% endif %}
+</body>
 </html>
-
